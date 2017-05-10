@@ -1,0 +1,12 @@
+*.pyc
+*.pyo
+*.sqlite3
+.idea/
+.idea
+.DS_Store
+src/dist/
+src/build/
+.coverage
+fabfile.py
+main.py
+*.pkl
