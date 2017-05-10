@@ -23,7 +23,7 @@ Python 3 及以上
 
 ## 使用
 
-如果你是 wxpy 的使用者，无需任何更改即可使用 wechat_sender：
+如果你是 wxpy 的使用者，只需更改一句即可使用 wechat_sender：
 
 例如这是你本来的代码：
 
