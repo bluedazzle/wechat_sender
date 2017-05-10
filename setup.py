@@ -1,3 +1,4 @@
+# coding: utf-8
 import codecs
 import os
 import sys
@@ -45,7 +46,8 @@ setup(
         'Topic :: Utilities',
     ],
     install_requires=[
-        'future'
+        'tornado',
+        'wxpy',
     ],
 
     keywords=KEYWORDS,

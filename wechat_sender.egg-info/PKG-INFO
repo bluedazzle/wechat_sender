@@ -1,0 +1,21 @@
+Metadata-Version: 1.1
+Name: wechat-sender
+Version: 0.0.1
+Summary: 将程序运行结果及报警信息通过微信发送给你自己
+Home-page: https://github.com/bluedazzle/wechat_sender
+Author: RaPoSpectre
+Author-email: rapospectre@gmail.com
+License: BSD
+Description: Wechat Sender
+        =============
+        
+        --------------
+        
+        将程序运行结果及报警信息通过微信发送给你自己
+Keywords: Wechat,微信,监控
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Communications :: Chat
+Classifier: Topic :: Utilities
