@@ -6,7 +6,7 @@ import tornado.web
 from tornado.options import define, options
 
 from objects import WxBot
-from ..wechat_sender.utils import StatusWrapperMixin, STATUS_BOT_EXCEPTION, STATUS_PERMISSION_DENIED
+from wechat_sender.utils import StatusWrapperMixin, STATUS_BOT_EXCEPTION, STATUS_PERMISSION_DENIED
 
 wxbot = None
 

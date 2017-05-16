@@ -74,5 +74,45 @@ from wechat_sender import send
 send("test message")
 ```
 
+## API
+
+#### **wechat_sender.listen(bot, receiver, token, port)**
+
+### **参数**
+* bot(_必填_|Bot对象)-wxpy 的 Bot 对象实例
+* receiver(_可选_|Chat 对象)-接收消息，wxpy 的 Chat 对象实例, 不填为当前 bot 对象的文件接收者
+* token(_可选_|string)- 信令，防止 receiver 被非法滥用，建议加上 token 防止非法使用，如果使用 token 请在 send 时也使用统一 token，否则无法发送。token 建议为 32 位及以上的无规律字符串
+* port(_可选_|integer)- 监听端口, 监听端口默认为 10245 ，如有冲突或特殊需要请自行指定，需要和 send 处统一
+
+
+#### **wechat_sender.send(message, token, port)**
+
+### **参数**
+* message(_必填_|string)-需要发送的消息，目前只支持文本消息
+* token(_可选_|string)-信令，如果不为空请保持和 listen 中的 token 一致
+* port(_可选_|integer)-发送端口，如果不为空请保持和 listen 中的 port 一致
+
+
+## TODO LIST
+
+- [ ] wxpy 掉线邮件通知
+- [ ] wxpy 掉线重连
+
+## 历史
+
+**当前版本： 0.0.2**
+
+2017.05.17 0.0.2:
+
+优化代码
+
+2017.05.11 0.0.1:
+
+发布初版
+
+
+
+
+
 [1]:https://github.com/youfou/wxpy
 [2]:https://github.com/tornadoweb/tornado

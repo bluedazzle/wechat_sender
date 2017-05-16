@@ -5,7 +5,7 @@ import json
 
 import requests
 
-from ..wechat_sender.utils import STATUS_SUCCESS
+from wechat_sender.utils import STATUS_SUCCESS
 
 
 def send(message, token=None, port=10245):
