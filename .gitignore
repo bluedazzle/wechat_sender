@@ -2,7 +2,6 @@
 *.pyo
 *.sqlite3
 .idea/
-.idea
 .DS_Store
 src/dist/
 src/build/
@@ -10,3 +9,6 @@ src/build/
 fabfile.py
 main.py
 *.pkl
+build/
+dist/
+wechat_sender.egg-info/
