@@ -8,6 +8,7 @@ src/build/
 .coverage
 fabfile.py
 main.py
+client.py
 *.pkl
 build/
 dist/

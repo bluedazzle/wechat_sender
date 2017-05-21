@@ -5,7 +5,12 @@ import codecs
 STATUS_SUCCESS = 0
 STATUS_PERMISSION_DENIED = 1
 STATUS_BOT_EXCEPTION = 2
+STATUS_TORNADO_EXCEPTION = 3
+STATUS_ERROR = 4
 
+
+DEFAULT_REMIND_TIME = 60 * 60
+DEFAULT_REPORT_TIME = 60 * 60 * 1000
 
 def _read_config_list():
     with codecs.open('conf.ini', 'w+', encoding='utf-8') as f1:
