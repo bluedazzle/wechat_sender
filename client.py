@@ -5,4 +5,5 @@ import datetime
 
 from wechat_sender import delay_send, send
 
-print delay_send('test title', 'test content', '2017-05-21 19:20:00', remind=datetime.timedelta(seconds=30), token='test')
+print delay_send('test title', 'test content', datetime.datetime.now() + datetime.timedelta(minutes=1),
+                 remind=datetime.timedelta(seconds=30), token='test')

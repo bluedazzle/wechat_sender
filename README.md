@@ -92,6 +92,16 @@ send("test message")
 * token(_可选_|string)-信令，如果不为空请保持和 listen 中的 token 一致
 * port(_可选_|integer)-发送端口，如果不为空请保持和 listen 中的 port 一致
 
+#### **wechat_sender.delay_send(title, content, time, remind, token, port)**
+
+### **参数**
+* title(_必填_|string)-需要发送的消息标题，目前只支持文本消息
+* content(_必填_|string)-需要发送的消息内容，目前只支持文本消息
+* time(_必填_|string or datetime)-发送消息的开始时间，支持 datetime.date、datetime.datetime 格式或者如 '2017-05-21 10:00:00' 的字符串
+* remind(_可选_|integer or datetime.timedelta)-消息提醒时移，默认 1 小时，即早于 time 值 1 小时发送消息提醒, 支持 integer（毫秒） 或 datetime.timedelta
+* token(_可选_|string)-信令，如果不为空请保持和 listen 中的 token 一致
+* port(_可选_|integer)-发送端口，如果不为空请保持和 listen 中的 port 一致
+
 
 ## TODO LIST
 

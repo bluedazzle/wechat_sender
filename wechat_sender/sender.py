@@ -25,6 +25,8 @@ def send(message, token=None, port=10245):
 
 def delay_send(title, content, time, remind=DEFAULT_REMIND_TIME, token=None, port=10245):
     url = 'http://localhost:{0}/delay_message'.format(port)
+    if isinstance(time, (datetime.datetime, datetime.date)):
+        time = time.strftime('%Y-%m-%d %H:%M:%S')
     if isinstance(remind, datetime.timedelta):
         remind = remind.seconds
     if not isinstance(remind, (int, long)):
