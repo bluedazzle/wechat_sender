@@ -8,9 +8,15 @@ STATUS_BOT_EXCEPTION = 2
 STATUS_TORNADO_EXCEPTION = 3
 STATUS_ERROR = 4
 
-
 DEFAULT_REMIND_TIME = 60 * 60
 DEFAULT_REPORT_TIME = 60 * 60 * 1000
+
+DELAY_TASK = 'DELAY_TASK'
+PERIODIC_TASK = 'PERIODIC_TASK'
+SYSTEM_TASK = 'SYSTEM_TASK'
+
+MESSAGE_REPORT_COMMAND = '@wsr'
+
 
 def _read_config_list():
     with codecs.open('conf.ini', 'w+', encoding='utf-8') as f1:

@@ -1,7 +1,7 @@
 # coding: utf-8
+from __future__ import unicode_literals
 import codecs
 import os
-import sys
 
 try:
     from setuptools import setup
@@ -10,7 +10,7 @@ except ImportError:
 
 
 def read(fname):
-    return codecs.open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return codecs.open(os.path.join(os.path.dirname(__file__), fname), encoding='utf-8').read()
 
 
 NAME = "wechat_sender"
