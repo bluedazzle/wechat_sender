@@ -16,7 +16,7 @@ import tornado.web
 from objects import WxBot, Message, Global
 from wechat_sender.utils import StatusWrapperMixin, STATUS_BOT_EXCEPTION, STATUS_PERMISSION_DENIED, \
     STATUS_TORNADO_EXCEPTION, DEFAULT_REMIND_TIME, STATUS_ERROR, DEFAULT_REPORT_TIME, DELAY_TASK, PERIODIC_TASK, \
-    MESSAGE_REPORT_COMMAND, SYSTEM_TASK
+    MESSAGE_REPORT_COMMAND, SYSTEM_TASK, MESSAGE_STATUS_COMMAND
 
 glb = None
 _logger = logging.getLogger(__name__)
@@ -179,16 +179,21 @@ class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
         self.write('Success')
 
 
+def generate_run_info():
+    uptime = datetime.datetime.now() - datetime.datetime.fromtimestamp(process.create_time())
+    memory_usage = glb.run_info.memory_info().rss
+    msg = '[当前时间] {now:%H:%M:%S}\n[运行时间] {uptime}\n[内存占用] {memory}\n[发送消息] {messages}'.format(
+        now=datetime.datetime.now(),
+        uptime=str(uptime).split('.')[0],
+        memory='{:.2f} MB'.format(memory_usage / 1024 ** 2),
+        messages=len(glb.wxbot.bot.messages)
+    )
+    return msg
+
+
 def check_bot(task_type=SYSTEM_TASK):
     if glb.wxbot.bot.alive:
-        uptime = datetime.datetime.now() - datetime.datetime.fromtimestamp(process.create_time())
-        memory_usage = glb.run_info.memory_info().rss
-        msg = '[当前时间] {now:%H:%M:%S}\n[运行时间] {uptime}\n[内存占用] {memory}\n[发送消息] {messages}'.format(
-            now=datetime.datetime.now(),
-            uptime=str(uptime).split('.')[0],
-            memory='{:.2f} MB'.format(memory_usage / 1024 ** 2),
-            messages=len(glb.wxbot.bot.messages)
-        )
+        msg = generate_run_info()
         glb.wxbot.send_msg(msg)
         _logger.info(
             '{0} Send status message {1} at {2:%Y-%m-%d %H:%M:%S}'.format(task_type, msg, datetime.datetime.now()))
@@ -224,10 +229,12 @@ def register_listener_handle(wxbot):
     from wxpy import TEXT
 
     @wxbot.bot.register(wxbot.receiver, TEXT, except_self=False)
-    def timeout_message_report_reply(msg):
-        if msg.text == MESSAGE_REPORT_COMMAND:
-            return timeout_message_report()
-
+    def sender_command_handle(msg):
+        command_dict = {MESSAGE_REPORT_COMMAND: timeout_message_report(),
+                        MESSAGE_STATUS_COMMAND: generate_run_info()}
+        message = command_dict.get(msg.text, None)
+        if message:
+            return message
         myself = wxbot.bot.registered.get_config(msg)
         registered_copy = copy.copy(wxbot.bot.registered)
         registered_copy.remove(myself)
