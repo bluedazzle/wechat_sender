@@ -180,7 +180,7 @@ class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
 
 
 def generate_run_info():
-    uptime = datetime.datetime.now() - datetime.datetime.fromtimestamp(process.create_time())
+    uptime = datetime.datetime.now() - datetime.datetime.fromtimestamp(glb.run_info.create_time())
     memory_usage = glb.run_info.memory_info().rss
     msg = '[当前时间] {now:%H:%M:%S}\n[运行时间] {uptime}\n[内存占用] {memory}\n[发送消息] {messages}'.format(
         now=datetime.datetime.now(),
@@ -245,7 +245,7 @@ def register_listener_handle(wxbot):
                 pre_conf.func(msg)
 
 
-def listen(bot, receiver=None, token=None, port=10245):
+def listen(bot, receiver=None, token=None, port=10245, status_report=False):
     global glb
     periodic_list = []
     app = Application()
@@ -253,9 +253,12 @@ def listen(bot, receiver=None, token=None, port=10245):
     register_listener_handle(wxbot)
     process = psutil.Process()
     app.listen(port)
-    check_periodic = tornado.ioloop.PeriodicCallback(functools.partial(check_bot, SYSTEM_TASK), DEFAULT_REPORT_TIME)
-    check_periodic.start()
-    periodic_list.append(check_periodic)
+
+    if status_report:
+        check_periodic = tornado.ioloop.PeriodicCallback(functools.partial(check_bot, SYSTEM_TASK), DEFAULT_REPORT_TIME)
+        check_periodic.start()
+        periodic_list.append(check_periodic)
+
     glb = Global(wxbot=wxbot, run_info=process, periodic_list=periodic_list, ioloop=tornado.ioloop.IOLoop.instance(),
                  token=token)
     tornado.ioloop.IOLoop.current().start()
