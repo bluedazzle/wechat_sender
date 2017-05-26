@@ -1,5 +1,5 @@
 # coding: utf-8
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 import codecs
 import os
 
@@ -29,7 +29,7 @@ AUTHOR_EMAIL = "rapospectre@gmail.com"
 
 URL = "https://github.com/bluedazzle/wechat_sender"
 
-VERSION = "0.0.2"
+VERSION = "0.0.3"
 
 LICENSE = "BSD"
 
@@ -47,7 +47,6 @@ setup(
     ],
     install_requires=[
         'tornado',
-        'wxpy',
     ],
 
     keywords=KEYWORDS,
