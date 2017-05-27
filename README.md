@@ -76,8 +76,7 @@ Sender().send("test message")
 
 ## API
 
-### **wechat_sender.listen(bot, receiver=None, token=None, port=10245, status_report=False, status_receiver=None,
-           status_interval=60 * 60 * 1000)**
+### **wechat_sender.listen(bot, receiver=None, token=None, port=10245, status_report=False, status_receiver=None, status_interval=60 * 60 * 1000)**
 
 #### **参数**
 * bot(_必填_|Bot对象)-wxpy 的 Bot 对象实例
