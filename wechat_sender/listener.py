@@ -260,12 +260,12 @@ def register_listener_handle(wxbot):
                 pre_conf.func(msg)
 
 
-def listen(bot, receiver=None, token=None, port=10245, status_report=False, status_receiver=None,
+def listen(bot, receivers=None, token=None, port=10245, status_report=False, status_receiver=None,
            status_interval=DEFAULT_REPORT_TIME):
     global glb
     periodic_list = []
     app = Application()
-    wxbot = WxBot(bot, receiver, status_receiver)
+    wxbot = WxBot(bot, receivers, status_receiver)
     register_listener_handle(wxbot)
     process = psutil.Process()
     app.listen(port)

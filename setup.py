@@ -17,7 +17,7 @@ NAME = "wechat_sender"
 
 PACKAGES = ["wechat_sender", ]
 
-DESCRIPTION = "将程序运行结果及报警信息通过微信发送给你自己"
+DESCRIPTION = "随时随地发送消息到微信"
 
 LONG_DESCRIPTION = read("README.rst")
 
@@ -29,7 +29,7 @@ AUTHOR_EMAIL = "rapospectre@gmail.com"
 
 URL = "https://github.com/bluedazzle/wechat_sender"
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 LICENSE = "BSD"
 
@@ -44,6 +44,8 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Communications :: Chat',
         'Topic :: Utilities',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6'
     ],
     install_requires=[
         'tornado',

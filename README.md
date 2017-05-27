@@ -1,10 +1,10 @@
 # Wechat_Sender
 
-将程序运行结果及报警信息通过微信发送给你自己
+随时随地发送消息到微信
 
 ## 简介
 
-wechat_sender 是基于 [wxpy][1] 和 [tornado][2] 实现的一个可以将你的网站、爬虫、脚本等其他应用中各种消息 （日志、报警、运行结果等） 发给你的个人微信的工具
+wechat_sender 是基于 [wxpy][1] 和 [tornado][2] 实现的一个可以将你的网站、爬虫、脚本等其他应用中各种消息 （日志、报警、运行结果等） 发给到微信的工具
 
 ## 初衷
 
@@ -66,7 +66,7 @@ def reply_test(msg):
 listen(bot) # 只需改变最后一行代码
 ```
 
-之后如果你想在其他地方发送微信消息给你自己，只需要：
+之后如果你想在其他程序或脚本中发送微信消息，只需要：
 
 ```python
 # coding: utf-8
@@ -76,13 +76,18 @@ Sender().send("test message")
 
 ## API
 
-### **wechat_sender.listen(bot, receiver, token, port)**
+### **wechat_sender.listen(bot, receiver=None, token=None, port=10245, status_report=False, status_receiver=None,
+           status_interval=60 * 60 * 1000)**
 
 #### **参数**
 * bot(_必填_|Bot对象)-wxpy 的 Bot 对象实例
-* receiver(_可选_|Chat 对象)-接收消息，wxpy 的 Chat 对象实例, 不填为当前 bot 对象的文件接收者
+* receivers(_可选_|Chat 对象|Chat 对象列表)-消息接收者，wxpy 的 Chat 对象实例, 或 Chat 对象列表，如果为 list 第一个 Chat 为默认接收者。如果为 Chat 对象，则默认接收者也是此对象。 不填为当前 bot 对象的文件接收者
 * token(_可选_|string)- 信令，防止 receiver 被非法滥用，建议加上 token 防止非法使用，如果使用 token 请在 send 时也使用统一 token，否则无法发送。token 建议为 32 位及以上的无规律字符串
 * port(_可选_|integer)- 监听端口, 监听端口默认为 10245 ，如有冲突或特殊需要请自行指定，需要和 send 处统一
+* status_report(_可选_|bool)- 是否开启状态报告，如果开启，wechat_sender 将会定时发送状态信息到 status_receiver
+* status_receiver(_可选_|Chat 对象)- 指定 status_receiver，不填将会发送状态消息给默认接收者
+* status_interval(_可选_|integer|datetime.timedelta)- 指定状态报告发送间隔时间，为 integer 时代表毫秒
+
 
 
 ### **class wechat_sender.Sender(token=None, host="http://localhost", port=10245)**
@@ -157,13 +162,17 @@ Sender().send("test message")
 
 ## TODO LIST
 
-- [ ] 多 receiver
+- [x] 多 receiver
 - [ ] wxpy 掉线邮件通知
 - [ ] wxpy 掉线重连
 
 ## 历史
 
-**当前版本： 0.1.0**
+**当前版本： 0.1.1**
+
+2017.05.27 0.1.1:
+
+增加多 receiver 支持;
 
 2017.05.27 0.1.0:
 
