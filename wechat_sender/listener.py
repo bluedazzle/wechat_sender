@@ -41,19 +41,25 @@ class MessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
     def post(self, *args, **kwargs):
         message = self.get_argument('content', None)
         token = self.get_argument('token', None)
-        if message:
-            if glb.token:
-                if glb.token != token:
-                    self.status_code = STATUS_PERMISSION_DENIED
-                    self.write('Token is missing')
-                    return
-            try:
-                glb.wxbot.send_msg(message)
-                self.write('Success')
-            except Exception as e:
-                _logger.exception(e)
-                self.status_code = STATUS_BOT_EXCEPTION
-                self.write(e.message)
+        receiver = self.get_argument('receiver', None)
+        if not message:
+            self.status_code = STATUS_ERROR
+            self.write('Content is required')
+            return
+
+        if glb.token:
+            if glb.token != token:
+                self.status_code = STATUS_PERMISSION_DENIED
+                self.write('Token is missing')
+                return
+        try:
+            msg = Message(message, receiver=receiver)
+            glb.wxbot.send_msg(msg)
+            self.write('Success')
+        except Exception as e:
+            _logger.exception(e)
+            self.status_code = STATUS_BOT_EXCEPTION
+            self.write(e.message)
 
 
 class DelayMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
@@ -67,6 +73,8 @@ class DelayMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
         task_time = self.get_argument('time', None)
         remind = int(self.get_argument('remind', DEFAULT_REMIND_TIME))
         token = self.get_argument('token', None)
+        receiver = self.get_argument('receiver', None)
+
         if glb.token:
             if glb.token != token:
                 self.status_code = STATUS_PERMISSION_DENIED
@@ -87,7 +95,7 @@ class DelayMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
             task_time = datetime.datetime.now()
             timestamp = int(time.mktime(task_time.timetuple()))
         try:
-            message = Message(content, title, task_time, datetime.timedelta(seconds=remind))
+            message = Message(content, title, task_time, datetime.timedelta(seconds=remind), receiver=receiver)
             self.ioloop.call_at(timestamp, self.delay_task, DELAY_TASK, message)
             self.write('Success')
         except Exception as e:
@@ -114,6 +122,8 @@ class PeriodicMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
         title = self.get_argument('title', '')
         interval = self.get_argument('interval', None)
         token = self.get_argument('token', None)
+        receiver = self.get_argument('receiver', None)
+
         if glb.token:
             if glb.token != token:
                 self.status_code = STATUS_PERMISSION_DENIED
@@ -129,7 +139,7 @@ class PeriodicMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
             self.status_code = STATUS_ERROR
             self.write('interval must be a integer')
         try:
-            message = Message(content, title=title, interval=datetime.timedelta(seconds=interval))
+            message = Message(content, title=title, interval=datetime.timedelta(seconds=interval), receiver=receiver)
             user_periodic = tornado.ioloop.PeriodicCallback(
                 functools.partial(self.periodic_task, PERIODIC_TASK, message),
                 interval * 1000, self.ioloop)
@@ -155,6 +165,8 @@ class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
         content = self.get_argument('content', '')
         search = self.get_argument('search', '')
         token = self.get_argument('token', None)
+        default_receiver = self.get_argument('receiver', None)
+
         if glb.token:
             if glb.token != token:
                 self.status_code = STATUS_PERMISSION_DENIED
@@ -175,7 +187,8 @@ class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
             receiver.send_msg(content)
         else:
             msg = '消息发送失败，没有找到接收者。\n[搜索条件]: {0}\n[消息内容]：{1}'.format(search, content)
-            glb.wxbot.send_msg(msg)
+            message = Message(msg, receiver=default_receiver)
+            glb.wxbot.send_msg(message)
             _logger.info(msg)
         self.write('Success')
 
@@ -195,7 +208,8 @@ def generate_run_info():
 def check_bot(task_type=SYSTEM_TASK):
     if glb.wxbot.bot.alive:
         msg = generate_run_info()
-        glb.wxbot.send_msg(msg)
+        message = Message(content=msg, receiver='status')
+        glb.wxbot.send_msg(message)
         _logger.info(
             '{0} Send status message {1} at {2:%Y-%m-%d %H:%M:%S}'.format(task_type, msg, datetime.datetime.now()))
     else:
@@ -214,22 +228,22 @@ def timeout_message_report():
             delay_task.append(message)
     msg = '当前已注册延时消息共有{0}条'.format(len(delay_task))
     for i, itm in enumerate(delay_task):
-        msg = '{pre}\n[ID (序号) ]：D{index}\n[发送时间]：{remind}\n[消息时间]：{time}\n[消息标题]：{message}\n'.format(
-            pre=msg, index=i, remind=itm.remind, time=itm.time, message=itm.title or itm.content)
+        msg = '{pre}\n[ID (序号) ]：D{index}\n[消息接收]：{receiver}\n[发送时间]：{remind}\n[消息时间]：{time}\n[消息标题]：{message}\n'.format(
+            pre=msg, index=i, remind=itm.remind, time=itm.time, message=itm.title or itm.content, receiver=itm.receiver)
     interval_task = [(periodic.callback.args[1], periodic.is_running()) for periodic in glb.periodic_list if
                      len(periodic.callback.args) == 2 and periodic.callback.args[0] == PERIODIC_TASK]
     msg = '{0}\n当前已注册周期消息共有{1}条'.format(msg, len(interval_task))
     for i, itm in enumerate(interval_task):
-        msg = '{pre}\n[ID (序号) ]：P{index}\n[运行状态]：{status}\n[发送周期]：{interval}\n[消息标题]：{message}\n'.format(
+        msg = '{pre}\n[ID (序号) ]：P{index}\n[消息接收]：{receiver}\n[运行状态]：{status}\n[发送周期]：{interval}\n[消息标题]：{message}\n'.format(
             pre=msg, index=i, interval=itm[0].interval, status='已激活' if itm[1] else '未激活',
-            message=itm[0].title or itm[0].content)
+            message=itm[0].title or itm[0].content, receiver=itm[0].receiver)
     return msg
 
 
 def register_listener_handle(wxbot):
     from wxpy import TEXT
 
-    @wxbot.bot.register(wxbot.receiver, TEXT, except_self=False)
+    @wxbot.bot.register(wxbot.default_receiver, TEXT, except_self=False)
     def sender_command_handle(msg):
         command_dict = {MESSAGE_REPORT_COMMAND: timeout_message_report(),
                         MESSAGE_STATUS_COMMAND: generate_run_info()}
@@ -246,17 +260,20 @@ def register_listener_handle(wxbot):
                 pre_conf.func(msg)
 
 
-def listen(bot, receiver=None, token=None, port=10245, status_report=False):
+def listen(bot, receiver=None, token=None, port=10245, status_report=False, status_receiver=None,
+           status_interval=DEFAULT_REPORT_TIME):
     global glb
     periodic_list = []
     app = Application()
-    wxbot = WxBot(bot, receiver)
+    wxbot = WxBot(bot, receiver, status_receiver)
     register_listener_handle(wxbot)
     process = psutil.Process()
     app.listen(port)
 
     if status_report:
-        check_periodic = tornado.ioloop.PeriodicCallback(functools.partial(check_bot, SYSTEM_TASK), DEFAULT_REPORT_TIME)
+        if isinstance(status_interval, datetime.timedelta):
+            status_interval = status_interval.seconds * 1000
+        check_periodic = tornado.ioloop.PeriodicCallback(functools.partial(check_bot, SYSTEM_TASK), status_interval)
         check_periodic.start()
         periodic_list.append(check_periodic)
 

@@ -9,19 +9,39 @@ class WxBot(object):
             cls._instance = orig.__new__(cls)
         return cls._instance
 
-    def __init__(self, bot=None, receiver=None, *args, **kwargs):
+    def __init__(self, bot=None, receivers=None, status_receiver=None, *args, **kwargs):
         self.bot = bot
-        if not receiver:
-            receiver = self.bot.file_helper
-        self.receiver = receiver
+        self.receivers = {}
+        self.default_receiver = None
+        self.init_receivers(receivers)
+        self.status_receiver = status_receiver if status_receiver else self.default_receiver
+        self.receivers['status'] = self.status_receiver
         super(WxBot, self).__init__(*args, **kwargs)
 
+    def init_receivers(self, receivers):
+        if not receivers:
+            self.default_receiver = self.bot.file_helper
+        if isinstance(receivers, list):
+            self.default_receiver = receivers[0]
+            for receiver in receivers:
+                if self.bot.puid_map:
+                    self.receivers[receiver.puid] = receiver
+                else:
+                    self.receivers[receiver.name] = receiver
+        else:
+            self.default_receiver = receivers
+            if self.bot.puid_map:
+                self.receivers[receivers.puid] = receivers
+            else:
+                self.receivers[receivers.name] = receivers
+
     def send_msg(self, msg):
-        self.receiver.send_msg(msg)
+        current_receiver = self.receivers.get(msg.receiver, self.default_receiver)
+        current_receiver.send_msg(msg)
 
 
 class Message(object):
-    def __init__(self, content, title=None, time=None, remind=None, interval=None):
+    def __init__(self, content, title=None, time=None, remind=None, interval=None, receiver=None):
         self.title = title
         self.content = content
         self.message_time = time
@@ -30,6 +50,7 @@ class Message(object):
             self.remind_time = time - remind
         self.nc = remind
         self.message_interval = interval
+        self.receiver = receiver.lower() if receiver else 'default'
 
     @property
     def time(self):

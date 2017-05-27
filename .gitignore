@@ -7,8 +7,8 @@ src/dist/
 src/build/
 .coverage
 fabfile.py
-main.py
-client.py
+test_main.py
+test_client.py
 *.pkl
 build/
 dist/

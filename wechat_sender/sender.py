@@ -11,8 +11,9 @@ from wechat_sender.utils import STATUS_SUCCESS, DEFAULT_REMIND_TIME
 
 
 class Sender(object):
-    def __init__(self, token=None, host='http://localhost', port=10245):
+    def __init__(self, token=None, receiver=None, host='http://localhost', port=10245):
         self.token = token
+        self.receiver = receiver
         self.host = host
         self.port = port
         self.remote = '{0}:{1}/'.format(self.host, self.port)
@@ -22,6 +23,8 @@ class Sender(object):
         self.data = kwargs
         if self.token:
             self.data['token'] = self.token
+        if self.receiver:
+            self.data['receiver'] = self.receiver
         return self.data
 
     def send(self, message):
