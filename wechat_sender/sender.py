@@ -1,5 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
+from __future__ import absolute_import
 
 import json
 
@@ -41,7 +42,7 @@ class Sender(object):
             time = time.strftime('%Y-%m-%d %H:%M:%S')
         if isinstance(remind, datetime.timedelta):
             remind = remind.seconds
-        if not isinstance(remind, (int, long)):
+        if not isinstance(remind, int):
             raise ValueError
         data = self._wrap_post_data(title=title, content=content, time=time, remind=remind)
         res = requests.post(url, data=data, timeout=2)
@@ -57,7 +58,7 @@ class Sender(object):
         url = '{0}periodic_message'.format(self.remote)
         if isinstance(interval, datetime.timedelta):
             interval = interval.seconds
-        if not isinstance(interval, (int, long)):
+        if not isinstance(interval, int):
             raise ValueError
         data = self._wrap_post_data(title=title, content=content, interval=interval)
         res = requests.post(url, data, timeout=2)

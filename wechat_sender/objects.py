@@ -6,7 +6,7 @@ class WxBot(object):
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, '_instance'):
             orig = super(WxBot, cls)
-            cls._instance = orig.__new__(cls, *args, **kwargs)
+            cls._instance = orig.__new__(cls)
         return cls._instance
 
     def __init__(self, bot=None, receiver=None, *args, **kwargs):
@@ -63,11 +63,11 @@ class Global(object):
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, '_instance'):
             orig = super(Global, cls)
-            cls._instance = orig.__new__(cls, *args, **kwargs)
+            cls._instance = orig.__new__(cls)
         return cls._instance
 
     def __init__(self, *args, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
     def insert(self, name, value):

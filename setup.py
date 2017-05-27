@@ -29,7 +29,7 @@ AUTHOR_EMAIL = "rapospectre@gmail.com"
 
 URL = "https://github.com/bluedazzle/wechat_sender"
 
-VERSION = "0.0.3"
+VERSION = "0.1.0"
 
 LICENSE = "BSD"
 
@@ -47,6 +47,7 @@ setup(
     ],
     install_requires=[
         'tornado',
+        'psutil',
     ],
 
     keywords=KEYWORDS,

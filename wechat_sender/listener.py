@@ -1,5 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
+from __future__ import absolute_import
 
 import copy
 import functools
@@ -13,7 +14,7 @@ import logging
 import sys
 import tornado.web
 
-from objects import WxBot, Message, Global
+from wechat_sender.objects import WxBot, Message, Global
 from wechat_sender.utils import StatusWrapperMixin, STATUS_BOT_EXCEPTION, STATUS_PERMISSION_DENIED, \
     STATUS_TORNADO_EXCEPTION, DEFAULT_REMIND_TIME, STATUS_ERROR, DEFAULT_REPORT_TIME, DELAY_TASK, PERIODIC_TASK, \
     MESSAGE_REPORT_COMMAND, SYSTEM_TASK, MESSAGE_STATUS_COMMAND
@@ -97,7 +98,7 @@ class DelayMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
     @staticmethod
     def delay_task(task_type, message):
         # try:
-        wxbot.send_msg(message)
+        glb.wxbot.send_msg(message)
         _logger.info(
             '{0} Send delay message {1} at {2:%Y-%m-%d %H:%M:%S}'.format(task_type, message, datetime.datetime.now()))
         # except Exception as e:
