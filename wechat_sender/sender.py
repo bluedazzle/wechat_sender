@@ -6,6 +6,7 @@ import json
 
 import datetime
 import requests
+import logging
 
 from wechat_sender.utils import STATUS_SUCCESS, DEFAULT_REMIND_TIME
 
@@ -88,3 +89,18 @@ class Sender(object):
             return False, res_data.get('message')
         res.raise_for_status()
         return False, 'Request or Response Error'
+
+
+class LoggingSenderHandler(logging.Handler, Sender):
+    def __init__(self, name=None, token=None, receiver=None, host='http://localhost', port=10245, level=30):
+        super(LoggingSenderHandler, self).__init__(level)
+        Sender.__init__(self, token, receiver, host, port)
+        if not name:
+            import socket
+            ip = socket.gethostbyname_ex(socket.gethostname())[0]
+            name = ip
+        self.name = name
+        self.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
+
+    def emit(self, record):
+        self.send('[{0}]\n{1}'.format(self.name, self.format(record)))
