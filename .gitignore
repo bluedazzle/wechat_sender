@@ -8,8 +8,10 @@ src/build/
 .coverage
 fabfile.py
 test_main.py
+main.py
 test_client.py
 *.pkl
+*.puid
 build/
 dist/
 wechat_sender.egg-info/

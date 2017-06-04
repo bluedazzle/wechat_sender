@@ -89,10 +89,11 @@ Sender().send("test message")
 
 
 
-### **class wechat_sender.Sender(token=None, host="http://localhost", port=10245)**
+### **class wechat_sender.Sender(token=None, receiver=None, host="http://localhost", port=10245)**
 
 #### **属性**
 * token(_可选_|str)-信令，如果不为空请保持和 listen 中的 token 一致
+* receiver(_可选_|str)-接收者，wxpy puid 或 微信名、昵称等
 * host(_可选_|str)-远程地址，本地调用不用填
 * port(_可选_|integer)-发送端口，如果不为空请保持和 listen 中的 port 一致
 
@@ -123,6 +124,15 @@ Sender().send("test message")
 #### **参数**
 * content(_必填_|string)-需要发送的消息内容，目前只支持文本消息
 * search(_必填_|str|dict|list)-搜索对象，同 wxpy.chats.search 使用方法一样。例如，可以使用字符串进行搜索好友，或指定具体属性搜索，如 puid=xxx 的字典
+
+### **class wechat_sender.LoggingSenderHandler(token=None, receiver=None, host="http://localhost", port=10245, level=30)**
+
+#### **属性**
+* token(_可选_|str)-信令，如果不为空请保持和 listen 中的 token 一致
+* receiver(_可选_|str)-接收者，wxpy puid 或 微信名、昵称等
+* host(_可选_|str)-远程地址，本地调用不用填
+* port(_可选_|integer)-发送端口，如果不为空请保持和 listen 中的 port 一致
+* level(_可选_|integer)-输出的 log level 等级
 
 ## wechat_sender 微信命令
 

@@ -9,6 +9,7 @@ import requests
 import logging
 
 from wechat_sender.utils import STATUS_SUCCESS, DEFAULT_REMIND_TIME
+from functools import reduce
 
 
 class Sender(object):
@@ -19,6 +20,7 @@ class Sender(object):
         self.port = port
         self.remote = '{0}:{1}/'.format(self.host, self.port)
         self.data = {}
+        self.timeout = 5
 
     def _wrap_post_data(self, **kwargs):
         self.data = kwargs
@@ -31,7 +33,7 @@ class Sender(object):
     def send(self, message):
         url = '{0}message'.format(self.remote)
         data = self._wrap_post_data(content=message)
-        res = requests.post(url, data=data, timeout=2)
+        res = requests.post(url, data=data, timeout=self.timeout)
         if res.status_code == requests.codes.ok:
             res_data = json.loads(res.content)
             if res_data.get('status') == STATUS_SUCCESS:
@@ -49,7 +51,7 @@ class Sender(object):
         if not isinstance(remind, int):
             raise ValueError
         data = self._wrap_post_data(title=title, content=content, time=time, remind=remind)
-        res = requests.post(url, data=data, timeout=2)
+        res = requests.post(url, data=data, timeout=self.timeout)
         if res.status_code == requests.codes.ok:
             res_data = json.loads(res.content)
             if res_data.get('status') == STATUS_SUCCESS:
@@ -65,7 +67,7 @@ class Sender(object):
         if not isinstance(interval, int):
             raise ValueError
         data = self._wrap_post_data(title=title, content=content, interval=interval)
-        res = requests.post(url, data, timeout=2)
+        res = requests.post(url, data, timeout=self.timeout)
         if res.status_code == requests.codes.ok:
             res_data = json.loads(res.content)
             if res_data.get('status') == STATUS_SUCCESS:
@@ -81,7 +83,7 @@ class Sender(object):
         elif isinstance(search, list):
             search = reduce(lambda x, y: '{0} {1}'.format(x, y), search)
         data = self._wrap_post_data(content=content, search=search)
-        res = requests.post(url, data=data, timeout=2)
+        res = requests.post(url, data=data, timeout=self.timeout)
         if res.status_code == requests.codes.ok:
             res_data = json.loads(res.content)
             if res_data.get('status') == STATUS_SUCCESS:

@@ -21,6 +21,7 @@ class WxBot(object):
     def init_receivers(self, receivers):
         if not receivers:
             self.default_receiver = self.bot.file_helper
+            return True
         if isinstance(receivers, list):
             self.default_receiver = receivers[0]
             for receiver in receivers:
