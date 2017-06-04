@@ -172,12 +172,21 @@ Sender().send("test message")
 ## TODO LIST
 
 - [x] 多 receiver
+- [x] log handler 支持
 - [ ] wxpy 掉线邮件通知
 - [ ] wxpy 掉线重连
 
 ## 历史
 
-**当前版本： 0.1.1**
+**当前版本： 0.1.2**
+
+2017.06.04 0.1.2:
+
+修复 sender timeout 时间过短问题；
+
+修复初始化 listen 无 receiver 报错问题
+
+增加 LoggingSenderHandler, 提供 log handler 支持
 
 2017.05.27 0.1.1:
 
