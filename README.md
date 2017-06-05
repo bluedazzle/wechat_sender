@@ -78,7 +78,7 @@ Sender().send("test message")
 
 **扫码二维码，验证信息输入 'wechat_sender' 或 '加群' 进入交流群**
 
-![screenshot](https://raw.githubusercontent.com/bluedazzle/wechat_sender/master/qr.jpg)
+![screenshot](https://raw.githubusercontent.com/bluedazzle/wechat_sender/master/qr.jpeg)
 
 ## API
 
