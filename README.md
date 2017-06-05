@@ -74,6 +74,12 @@ from wechat_sender import Sender
 Sender().send("test message")
 ```
 
+## 交流
+
+**扫码二维码，验证信息输入 'wechat_sender' 或 '加群' 进入交流群**
+
+![screenshot](https://raw.githubusercontent.com/bluedazzle/wechat_sender/master/qr.jpg)
+
 ## API
 
 ### **wechat_sender.listen(bot, receiver=None, token=None, port=10245, status_report=False, status_receiver=None, status_interval=60 * 60 * 1000)**
