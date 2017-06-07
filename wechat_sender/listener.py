@@ -24,6 +24,10 @@ _logger = logging.getLogger(__name__)
 
 
 class Application(tornado.web.Application):
+    """
+    tornado app 初始化
+    """
+
     def __init__(self):
         handlers = [
             (r"/message", MessageHandle),
@@ -38,6 +42,10 @@ class Application(tornado.web.Application):
 
 
 class MessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
+    """
+    普通消息处理 handle
+    """
+
     def post(self, *args, **kwargs):
         message = self.get_argument('content', None)
         token = self.get_argument('token', None)
@@ -63,6 +71,10 @@ class MessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
 
 
 class DelayMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
+    """
+    延时消息处理 handle
+    """
+
     def __init__(self, application, request, *args, **kwargs):
         self.ioloop = tornado.ioloop.IOLoop.instance()
         super(DelayMessageHandle, self).__init__(application, request, *args, **kwargs)
@@ -113,6 +125,10 @@ class DelayMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
 
 
 class PeriodicMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
+    """
+    周期消息处理 handle
+    """
+
     def __init__(self, application, request, *args, **kwargs):
         self.ioloop = tornado.ioloop.IOLoop.instance()
         super(PeriodicMessageHandle, self).__init__(application, request, *args, **kwargs)
@@ -159,6 +175,10 @@ class PeriodicMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
 
 
 class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
+    """
+    指定消息接收处理 handle
+    """
+
     def post(self, *args, **kwargs):
         from wxpy import ensure_one
 
@@ -194,6 +214,9 @@ class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
 
 
 def generate_run_info():
+    """
+    获取当前运行状态
+    """
     uptime = datetime.datetime.now() - datetime.datetime.fromtimestamp(glb.run_info.create_time())
     memory_usage = glb.run_info.memory_info().rss
     msg = '[当前时间] {now:%H:%M:%S}\n[运行时间] {uptime}\n[内存占用] {memory}\n[发送消息] {messages}'.format(
@@ -206,6 +229,9 @@ def generate_run_info():
 
 
 def check_bot(task_type=SYSTEM_TASK):
+    """
+    wxpy bot 健康检查任务
+    """
     if glb.wxbot.bot.alive:
         msg = generate_run_info()
         message = Message(content=msg, receiver='status')
@@ -218,6 +244,9 @@ def check_bot(task_type=SYSTEM_TASK):
 
 
 def timeout_message_report():
+    """
+    周期/延时 消息报告
+    """
     timeout_list = glb.ioloop._timeouts
     delay_task = []
     for timeout in timeout_list:
@@ -241,6 +270,9 @@ def timeout_message_report():
 
 
 def register_listener_handle(wxbot):
+    """
+    wechat_sender 向 wxpy 注册控制消息 handler
+    """
     from wxpy import TEXT
 
     @wxbot.bot.register(wxbot.default_receiver, TEXT, except_self=False)
@@ -262,6 +294,18 @@ def register_listener_handle(wxbot):
 
 def listen(bot, receivers=None, token=None, port=10245, status_report=False, status_receiver=None,
            status_interval=DEFAULT_REPORT_TIME):
+    """
+    传入 bot 实例并启动 wechat_sender 服务
+
+    :param bot: (必填|Bot对象) - wxpy 的 Bot 对象实例
+    :param receivers: (选填|wxpy.Chat 对象|Chat 对象列表) - 消息接收者，wxpy 的 Chat 对象实例, 或 Chat 对象列表，如果为 list 第一个 Chat 为默认接收者。如果为 Chat 对象，则默认接收者也是此对象。 不填为当前 bot 对象的文件接收者
+    :param token: (选填|str) - 信令，防止 receiver 被非法滥用，建议加上 token 防止非法使用，如果使用 token 请在初始化 `Sender()` 时也使用统一 token，否则无法发送。token 建议为 32 位及以上的无规律字符串
+    :param port: (选填|int) - 监听端口, 监听端口默认为 10245 ，如有冲突或特殊需要请自行指定，需要和 `Sender()` 统一
+    :param status_report: (选填|bool) - 是否开启状态报告，如果开启，wechat_sender 将会定时发送状态信息到 status_receiver
+    :param status_receiver: (选填|Chat 对象) - 指定 status_receiver，不填将会发送状态消息给默认接收者
+    :param status_interval: (选填|int|datetime.timedelta) - 指定状态报告发送间隔时间，为 integer 时代表毫秒
+
+    """
     global glb
     periodic_list = []
     app = Application()

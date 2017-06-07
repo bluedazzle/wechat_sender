@@ -23,6 +23,26 @@ Python 3 及以上
 
 ## 使用
 
+1. 登录微信并启动 wechat_sender 服务.
+
+```python
+
+   from wxpy import *
+   from wechat_sender import *
+   bot = Bot()
+   listen(bot)
+   # 之后 wechat_sender 将持续运行等待接收外部消息
+```
+
+2. 在外部向微信发送消息.
+
+```python
+
+   from wechat_sender import Sender
+   Sender().send('Hello From Wechat Sender')
+   # Hello From Wechat Sender 这条消息将通过 1 中登录微信的文件助手发送给你
+```
+
 如果你是 wxpy 的使用者，只需更改一句即可使用 wechat_sender：
 
 例如这是你本来的代码：
@@ -80,100 +100,6 @@ Sender().send("test message")
 
 ![screenshot](https://raw.githubusercontent.com/bluedazzle/wechat_sender/master/qr.jpeg)
 
-## API
-
-### **wechat_sender.listen(bot, receiver=None, token=None, port=10245, status_report=False, status_receiver=None, status_interval=60 * 60 * 1000)**
-
-#### **参数**
-* bot(_必填_|Bot对象)-wxpy 的 Bot 对象实例
-* receivers(_可选_|Chat 对象|Chat 对象列表)-消息接收者，wxpy 的 Chat 对象实例, 或 Chat 对象列表，如果为 list 第一个 Chat 为默认接收者。如果为 Chat 对象，则默认接收者也是此对象。 不填为当前 bot 对象的文件接收者
-* token(_可选_|string)- 信令，防止 receiver 被非法滥用，建议加上 token 防止非法使用，如果使用 token 请在 send 时也使用统一 token，否则无法发送。token 建议为 32 位及以上的无规律字符串
-* port(_可选_|integer)- 监听端口, 监听端口默认为 10245 ，如有冲突或特殊需要请自行指定，需要和 send 处统一
-* status_report(_可选_|bool)- 是否开启状态报告，如果开启，wechat_sender 将会定时发送状态信息到 status_receiver
-* status_receiver(_可选_|Chat 对象)- 指定 status_receiver，不填将会发送状态消息给默认接收者
-* status_interval(_可选_|integer|datetime.timedelta)- 指定状态报告发送间隔时间，为 integer 时代表毫秒
-
-
-
-### **class wechat_sender.Sender(token=None, receiver=None, host="http://localhost", port=10245)**
-
-#### **属性**
-* token(_可选_|str)-信令，如果不为空请保持和 listen 中的 token 一致
-* receiver(_可选_|str)-接收者，wxpy puid 或 微信名、昵称等
-* host(_可选_|str)-远程地址，本地调用不用填
-* port(_可选_|integer)-发送端口，如果不为空请保持和 listen 中的 port 一致
-
-#### **方法**
-
-### **send(self, content)**
-
-#### **参数**
-* content(_必填_|string)-需要发送的消息内容，目前只支持文本消息
-
-### **delay_send(self, content, time, title='', remind=3600)**
-
-#### **参数**
-* content(_必填_|string)-需要发送的消息内容，目前只支持文本消息
-* time(_必填_|string or datetime)-发送消息的开始时间，支持 datetime.date、datetime.datetime 格式或者如 '2017-05-21 10:00:00' 的字符串
-* title(_可选_|string)-需要发送的消息标题
-* remind(_可选_|integer or datetime.timedelta)-消息提醒时移，默认 1 小时，即早于 time 值 1 小时发送消息提醒, 支持 integer（毫秒） 或 datetime.timedelta
-
-### **periodic_send(self, content, interval, title='')**
-
-#### **参数**
-* content(_必填_|string)-需要发送的消息内容，目前只支持文本消息
-* interval(_必填_|integer or datetime.timedelta)-发送消息间隔时间，支持 datetime.timedelta 或 integer 表示的秒数
-* title(_可选_|string)-需要发送的消息标题
-
-### **send_to(self, content, search)**
-
-#### **参数**
-* content(_必填_|string)-需要发送的消息内容，目前只支持文本消息
-* search(_必填_|str|dict|list)-搜索对象，同 wxpy.chats.search 使用方法一样。例如，可以使用字符串进行搜索好友，或指定具体属性搜索，如 puid=xxx 的字典
-
-### **class wechat_sender.LoggingSenderHandler(token=None, receiver=None, host="http://localhost", port=10245, level=30)**
-
-#### **属性**
-* token(_可选_|str)-信令，如果不为空请保持和 listen 中的 token 一致
-* receiver(_可选_|str)-接收者，wxpy puid 或 微信名、昵称等
-* host(_可选_|str)-远程地址，本地调用不用填
-* port(_可选_|integer)-发送端口，如果不为空请保持和 listen 中的 port 一致
-* level(_可选_|integer)-输出的 log level 等级
-
-## wechat_sender 微信命令
-
-通过给指定的 receiver 发送一些 wechat_sender 支持的命令可以获取 wechat_sender 的一些信息：
-
-目前支持：
-
-### 获取 wxpy 运行状态：向 receiver 发送 `@wss`
-
-命令返回：
-
-```
-[当前时间] 22:35:05
-[运行时间] 0:00:27
-[内存占用] 33.00 MB
-[发送消息] 10
-```
-
-### 获取 wechat_sender 延时与周期消息： 向 receiver 发送 `@wsr`
-
-命令返回：
-
-```
-当前已注册延时消息共有1条
-[ID (序号) ]：D0
-[发送时间]：2017-05-27 10:00:00
-[消息时间]：2017-05-27 11:00:00
-[消息标题]：延迟消息测试
-
-当前已注册周期消息共有1条
-[ID (序号) ]：P0
-[运行状态]：已激活
-[发送周期]：10s
-[消息标题]：周期消息测试test
-```
 
 ## TODO LIST
 
@@ -184,7 +110,11 @@ Sender().send("test message")
 
 ## 历史
 
-**当前版本： 0.1.2**
+**当前版本： 0.1.3**
+
+2017.06.07 0.1.3:
+
+优化代码，完善文档、注释
 
 2017.06.04 0.1.2:
 
@@ -219,9 +149,6 @@ Sender().send("test message")
 2017.05.11 0.0.1:
 
 发布初版
-
-
-
 
 
 [1]:https://github.com/youfou/wxpy

@@ -15,3 +15,6 @@ test_client.py
 build/
 dist/
 wechat_sender.egg-info/
+docs/build/
+docs/source/_static/
+docs/source/_templates/

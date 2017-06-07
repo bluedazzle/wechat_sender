@@ -20,12 +20,18 @@ MESSAGE_STATUS_COMMAND = '@wss'
 
 
 def _read_config_list():
+    """
+    配置列表读取
+    """
     with codecs.open('conf.ini', 'w+', encoding='utf-8') as f1:
         conf_list = [conf for conf in f1.read().split('\n') if conf != '']
         return conf_list
 
 
 def write_config(name, value):
+    """
+    配置写入
+    """
     name = name.lower()
     new = True
     conf_list = _read_config_list()
@@ -44,6 +50,9 @@ def write_config(name, value):
 
 
 def read_config(name):
+    """
+    配置读取
+    """
     name = name.lower()
     conf_list = _read_config_list()
     for conf in conf_list:
@@ -53,6 +62,9 @@ def read_config(name):
 
 
 class StatusWrapperMixin(object):
+    """
+    返回状态码 Mixin
+    """
     status_code = STATUS_SUCCESS
     status_message = ''
 
