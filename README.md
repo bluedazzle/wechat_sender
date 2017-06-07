@@ -2,6 +2,8 @@
 
 随时随地发送消息到微信
 
+http://wechat-sender.readthedocs.io/zh_CN/latest/
+
 ## 简介
 
 wechat_sender 是基于 [wxpy][1] 和 [tornado][2] 实现的一个可以将你的网站、爬虫、脚本等其他应用中各种消息 （日志、报警、运行结果等） 发给到微信的工具
@@ -93,6 +95,10 @@ listen(bot) # 只需改变最后一行代码
 from wechat_sender import Sender
 Sender().send("test message")
 ```
+## 文档
+
+http://wechat-sender.readthedocs.io/zh_CN/latest/
+
 
 ## 交流
 
