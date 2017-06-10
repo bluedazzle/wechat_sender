@@ -9,6 +9,7 @@ import requests
 import logging
 
 from wechat_sender.utils import STATUS_SUCCESS, DEFAULT_REMIND_TIME
+from wechat_sender.compatible import PY2, SYS_ENCODE
 from functools import reduce
 
 
@@ -47,6 +48,12 @@ class Sender(object):
             self.data['receiver'] = self.receiver
         return self.data
 
+    def _convert_bytes(self, msg):
+        if not PY2:
+            if isinstance(msg, bytes):
+                return str(msg, encoding=SYS_ENCODE)
+        return msg
+
     def send(self, message):
         """
         发送基本文字消息
@@ -59,7 +66,7 @@ class Sender(object):
         data = self._wrap_post_data(content=message)
         res = requests.post(url, data=data, timeout=self.timeout)
         if res.status_code == requests.codes.ok:
-            res_data = json.loads(res.content)
+            res_data = json.loads(self._convert_bytes(res.content))
             if res_data.get('status') == STATUS_SUCCESS:
                 return True, res_data.get('message')
             return False, res_data.get('message')
@@ -87,7 +94,7 @@ class Sender(object):
         data = self._wrap_post_data(title=title, content=content, time=time, remind=remind)
         res = requests.post(url, data=data, timeout=self.timeout)
         if res.status_code == requests.codes.ok:
-            res_data = json.loads(res.content)
+            res_data = json.loads(self._convert_bytes(res.content))
             if res_data.get('status') == STATUS_SUCCESS:
                 return True, res_data.get('message')
             return False, res_data.get('message')
@@ -112,7 +119,7 @@ class Sender(object):
         data = self._wrap_post_data(title=title, content=content, interval=interval)
         res = requests.post(url, data, timeout=self.timeout)
         if res.status_code == requests.codes.ok:
-            res_data = json.loads(res.content)
+            res_data = json.loads(self._convert_bytes(res.content))
             if res_data.get('status') == STATUS_SUCCESS:
                 return True, res_data.get('message')
             return False, res_data.get('message')
@@ -136,7 +143,7 @@ class Sender(object):
         data = self._wrap_post_data(content=content, search=search)
         res = requests.post(url, data=data, timeout=self.timeout)
         if res.status_code == requests.codes.ok:
-            res_data = json.loads(res.content)
+            res_data = json.loads(self._convert_bytes(res.content))
             if res_data.get('status') == STATUS_SUCCESS:
                 return True, res_data.get('message')
             return False, res_data.get('message')
