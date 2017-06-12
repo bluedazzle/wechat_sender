@@ -116,7 +116,15 @@ http://wechat-sender.readthedocs.io/zh_CN/latest/
 
 ## 历史
 
-**当前版本： 0.1.3**
+**当前版本： 0.1.4**
+
+2017.06.12 0.1.4:
+
+修复 Python 3 下 sender 发送成功后报错问题 #8
+
+Sender().send_to 方法增加支持搜索群发送
+
+Sender 支持指定多个 receivers
 
 2017.06.07 0.1.3:
 

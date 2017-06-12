@@ -198,9 +198,9 @@ class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
             search = search
         try:
             if isinstance(search, dict):
-                receiver = ensure_one(glb.wxbot.bot.friends(update=True).search(**search))
+                receiver = ensure_one(glb.wxbot.bot.search(**search))
             else:
-                receiver = ensure_one(glb.wxbot.bot.friends(update=True).search(search))
+                receiver = ensure_one(glb.wxbot.bot.search(search))
         except ValueError:
             receiver = None
         if receiver:

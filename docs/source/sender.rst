@@ -9,6 +9,21 @@ Sender 对象可以理解为在外部程序中（ 非 wechat_sender 服务，例
 
 .. automethod:: Sender.__init__
 
+指定多个发送者
+
+Sender 的 receiver 可以指定多个发送者，由这个 Sender 发送的消息默认会广播给多个发送者::
+
+    # coding: utf-8
+    import datetime
+    from wechat_sender import Sender
+
+    sender = Sender(token='xxx', receivers='aaa,bbb,ccc,ddd')
+    sender.send('broadcast message')
+
+.. note::
+
+    使用英文半角逗号分隔多个接收者
+
 .. automethod:: Sender.send
 
 .. automethod:: Sender.delay_send
@@ -73,7 +88,7 @@ Sender 对象可以理解为在外部程序中（ 非 wechat_sender 服务，例
 .. tip::
 
     | :func:`Sender.send_to` 的 search 参数使用方法和 wxpy 的 `wxpy.chats().search() <http://wxpy.readthedocs.io/zh/latest/bot.html#id4>`_. 一致
-    | 直接搜索昵称或用综合查询条件均可以搜索好友
+    | 直接搜索昵称或用综合查询条件均可以搜索好友或群
 
 使用多条件查询好友::
 

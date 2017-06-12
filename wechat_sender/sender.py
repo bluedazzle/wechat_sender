@@ -18,7 +18,7 @@ class Sender(object):
     sender 对象，任何外部程序向微信发送消息都需要初始化 sender 对象::
 
         from wechat_sender import Sender
-        sender = Sender(token='test', receiver='wechat_name')
+        sender = Sender(token='test', receiver='wechat_name,xxx,xxx')
 
         # 向 receiver 发送消息
         sender.send('Hello From Wechat Sender')
@@ -28,7 +28,7 @@ class Sender(object):
     def __init__(self, token=None, receivers=None, host='http://localhost', port=10245):
         """
         :param token: (选填|str) - 信令，如果不为空请保持和 listen 中的 token 一致
-        :param receivers: (选填|str) - 接收者，wxpy 的 puid 或 微信名、昵称等，不填将发送至 default_receiver
+        :param receivers: (选填|str) - 接收者，wxpy 的 puid 或 微信名、昵称等，多个发送者请使用半角逗号 ',' 分隔。不填将发送至 default_receiver
         :param host: (选填|str) - 远程地址，本地调用不用填写
         :param port: (选填|int) - 发送端口，默认 10245 端口，如不为空请保持和 listen 中的 port 一致
         """
@@ -134,7 +134,7 @@ class Sender(object):
         向指定好友发送消息
 
         :param content: (必填|str) - 需要发送的消息内容
-        :param search: (必填|str|dict|list)-搜索对象，同 wxpy.chats.search 使用方法一样。例如，可以使用字符串进行搜索好友，或指定具体属性搜索，如 puid=xxx 的字典
+        :param search: (必填|str|dict|list)-搜索对象，同 wxpy.chats.search 使用方法一样。例如，可以使用字符串进行搜索好友或群，或指定具体属性搜索，如 puid=xxx 的字典
         :return: * status：发送状态，True 发送成，False 发送失败
                  * message：发送失败详情
         """

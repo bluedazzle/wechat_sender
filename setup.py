@@ -29,7 +29,7 @@ AUTHOR_EMAIL = "rapospectre@gmail.com"
 
 URL = "https://github.com/bluedazzle/wechat_sender"
 
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 
 LICENSE = "BSD"
 

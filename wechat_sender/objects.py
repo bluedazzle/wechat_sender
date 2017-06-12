@@ -69,7 +69,7 @@ class Message(object):
         :param time:  消息时间
         :param remind: 消息提醒时间
         :param interval: 消息提醒间隔
-        :param receiver: 消息接收者
+        :param receivers: 消息接收者
         """
         self.title = title
         self.content = content
