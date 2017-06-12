@@ -25,15 +25,18 @@ class Sender(object):
 
     """
 
-    def __init__(self, token=None, receiver=None, host='http://localhost', port=10245):
+    def __init__(self, token=None, receivers=None, host='http://localhost', port=10245):
         """
         :param token: (选填|str) - 信令，如果不为空请保持和 listen 中的 token 一致
-        :param receiver: (选填|str) - 接收者，wxpy 的 puid 或 微信名、昵称等，不填将发送至 default_receiver
+        :param receivers: (选填|str) - 接收者，wxpy 的 puid 或 微信名、昵称等，不填将发送至 default_receiver
         :param host: (选填|str) - 远程地址，本地调用不用填写
         :param port: (选填|int) - 发送端口，默认 10245 端口，如不为空请保持和 listen 中的 port 一致
         """
         self.token = token
-        self.receiver = receiver
+        if isinstance(receivers, list):
+            self.receivers = ','.join(receivers)
+        else:
+            self.receivers = receivers
         self.host = host
         self.port = port
         self.remote = '{0}:{1}/'.format(self.host, self.port)
@@ -44,8 +47,8 @@ class Sender(object):
         self.data = kwargs
         if self.token:
             self.data['token'] = self.token
-        if self.receiver:
-            self.data['receiver'] = self.receiver
+        if self.receivers:
+            self.data['receivers'] = self.receivers
         return self.data
 
     def _convert_bytes(self, msg):

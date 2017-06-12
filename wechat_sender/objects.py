@@ -1,6 +1,8 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+import json
+
 
 class WxBot(object):
     """
@@ -39,21 +41,20 @@ class WxBot(object):
             for receiver in receivers:
                 if self.bot.puid_map:
                     self.receivers[receiver.puid] = receiver
-                else:
-                    self.receivers[receiver.name] = receiver
+                self.receivers[receiver.name] = receiver
         else:
             self.default_receiver = receivers
             if self.bot.puid_map:
                 self.receivers[receivers.puid] = receivers
-            else:
-                self.receivers[receivers.name] = receivers
+            self.receivers[receivers.name] = receivers
 
     def send_msg(self, msg):
         """
         wxpy 发送文本消息的基本封装，这里会进行消息 receiver 识别分发
         """
-        current_receiver = self.receivers.get(msg.receiver, self.default_receiver)
-        current_receiver.send_msg(msg)
+        for receiver in msg.receivers:
+            current_receiver = self.receivers.get(receiver, self.default_receiver)
+            current_receiver.send_msg(msg)
 
 
 class Message(object):
@@ -61,7 +62,7 @@ class Message(object):
     wechat_sender 消息类，是所有 wechat_sender 发送消息的基本类型
     """
 
-    def __init__(self, content, title=None, time=None, remind=None, interval=None, receiver=None):
+    def __init__(self, content, title=None, time=None, remind=None, interval=None, receivers=None):
         """
         :param content: 消息内容
         :param title:  消息标题
@@ -78,7 +79,7 @@ class Message(object):
             self.remind_time = time - remind
         self.nc = remind
         self.message_interval = interval
-        self.receiver = receiver.lower() if receiver else 'default'
+        self.receivers = [itm for itm in receivers.split(',')] if receivers else ['default']
 
     @property
     def time(self):

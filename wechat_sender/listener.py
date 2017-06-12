@@ -49,7 +49,7 @@ class MessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
     def post(self, *args, **kwargs):
         message = self.get_argument('content', None)
         token = self.get_argument('token', None)
-        receiver = self.get_argument('receiver', None)
+        receivers = self.get_argument('receivers', None)
         if not message:
             self.status_code = STATUS_ERROR
             self.write('Content is required')
@@ -61,7 +61,7 @@ class MessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
                 self.write('Token is missing')
                 return
         try:
-            msg = Message(message, receiver=receiver)
+            msg = Message(message, receivers=receivers)
             glb.wxbot.send_msg(msg)
             self.write('Success')
         except Exception as e:
@@ -85,7 +85,7 @@ class DelayMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
         task_time = self.get_argument('time', None)
         remind = int(self.get_argument('remind', DEFAULT_REMIND_TIME))
         token = self.get_argument('token', None)
-        receiver = self.get_argument('receiver', None)
+        receivers = self.get_argument('receivers', None)
 
         if glb.token:
             if glb.token != token:
@@ -107,7 +107,7 @@ class DelayMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
             task_time = datetime.datetime.now()
             timestamp = int(time.mktime(task_time.timetuple()))
         try:
-            message = Message(content, title, task_time, datetime.timedelta(seconds=remind), receiver=receiver)
+            message = Message(content, title, task_time, datetime.timedelta(seconds=remind), receivers=receivers)
             self.ioloop.call_at(timestamp, self.delay_task, DELAY_TASK, message)
             self.write('Success')
         except Exception as e:
@@ -138,7 +138,7 @@ class PeriodicMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
         title = self.get_argument('title', '')
         interval = self.get_argument('interval', None)
         token = self.get_argument('token', None)
-        receiver = self.get_argument('receiver', None)
+        receivers = self.get_argument('receivers', None)
 
         if glb.token:
             if glb.token != token:
@@ -155,7 +155,7 @@ class PeriodicMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
             self.status_code = STATUS_ERROR
             self.write('interval must be a integer')
         try:
-            message = Message(content, title=title, interval=datetime.timedelta(seconds=interval), receiver=receiver)
+            message = Message(content, title=title, interval=datetime.timedelta(seconds=interval), receivers=receivers)
             user_periodic = tornado.ioloop.PeriodicCallback(
                 functools.partial(self.periodic_task, PERIODIC_TASK, message),
                 interval * 1000, self.ioloop)
@@ -185,7 +185,7 @@ class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
         content = self.get_argument('content', '')
         search = self.get_argument('search', '')
         token = self.get_argument('token', None)
-        default_receiver = self.get_argument('receiver', None)
+        default_receiver = self.get_argument('receivers', None)
 
         if glb.token:
             if glb.token != token:
@@ -207,7 +207,7 @@ class UserMessageHandle(StatusWrapperMixin, tornado.web.RequestHandler):
             receiver.send_msg(content)
         else:
             msg = '消息发送失败，没有找到接收者。\n[搜索条件]: {0}\n[消息内容]：{1}'.format(search, content)
-            message = Message(msg, receiver=default_receiver)
+            message = Message(msg, receivers=default_receiver)
             glb.wxbot.send_msg(message)
             _logger.info(msg)
         self.write('Success')
@@ -234,7 +234,7 @@ def check_bot(task_type=SYSTEM_TASK):
     """
     if glb.wxbot.bot.alive:
         msg = generate_run_info()
-        message = Message(content=msg, receiver='status')
+        message = Message(content=msg, receivers='status')
         glb.wxbot.send_msg(message)
         _logger.info(
             '{0} Send status message {1} at {2:%Y-%m-%d %H:%M:%S}'.format(task_type, msg, datetime.datetime.now()))
