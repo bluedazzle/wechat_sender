@@ -91,7 +91,7 @@ class Sender(object):
         if isinstance(time, (datetime.datetime, datetime.date)):
             time = time.strftime('%Y-%m-%d %H:%M:%S')
         if isinstance(remind, datetime.timedelta):
-            remind = remind.seconds
+            remind = int(remind.total_seconds())
         if not isinstance(remind, int):
             raise ValueError
         data = self._wrap_post_data(title=title, content=content, time=time, remind=remind)
@@ -116,7 +116,7 @@ class Sender(object):
         """
         url = '{0}periodic_message'.format(self.remote)
         if isinstance(interval, datetime.timedelta):
-            interval = interval.seconds
+            interval = int(interval.total_seconds())
         if not isinstance(interval, int):
             raise ValueError
         data = self._wrap_post_data(title=title, content=content, interval=interval)
