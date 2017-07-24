@@ -25,7 +25,7 @@ class Sender(object):
 
     """
 
-    def __init__(self, token=None, receivers=None, host='http://localhost', port=10245):
+    def __init__(self, token=None, receivers=None, host='http://localhost', port=10245, timeout=5):
         """
         :param token: (选填|str) - 信令，如果不为空请保持和 listen 中的 token 一致
         :param receivers: (选填|str) - 接收者，wxpy 的 puid 或 微信名、昵称等，多个发送者请使用半角逗号 ',' 分隔。不填将发送至 default_receiver
@@ -41,7 +41,7 @@ class Sender(object):
         self.port = port
         self.remote = '{0}:{1}/'.format(self.host, self.port)
         self.data = {}
-        self.timeout = 5
+        self.timeout = timeout
 
     def _wrap_post_data(self, **kwargs):
         self.data = kwargs
